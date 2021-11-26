@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  openwrt:
+    image: openwrt
+    container_name: openwrt
+    build:
+      context: .
+    volumes:
+      - ${PWD}/bin:/home/build/openwrt/bin
+    network_mode: host
+    privileged: true
