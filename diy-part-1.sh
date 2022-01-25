@@ -17,10 +17,24 @@ sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
 # echo 'src-git helloworld https://github.com/fw876/helloworld' >>feeds.conf.default
 # echo 'src-git passwall https://github.com/xiaorouji/openwrt-passwall' >> feeds.conf.default
 
-# Add OpenClash
 cd /workdir
+
+# Add Some Packages From Lede
+git clone --depth 1 https://github.com/coolsnowwolf/lede -b master lede
+mv lede/package/lean/luci-app-webadmin openwrt/package/
+mv lede/package/lean/luci-app-docker openwrt/package/
+mv lede/package/lean/luci-lib-docker openwrt/package/
+mv lede/package/lean/luci-theme-argon openwrt/package/
+
+# Add Kcptun From Passwall
+git clone --depth 1 https://github.com/xiaorouji/openwrt-passwall.git passwall
+mv passwall/kcptun openwrt/package/
+
+# Add OpenClash
 wget https://github.com/vernesong/OpenClash/archive/master.zip
 unzip master.zip
 rm -fr master.zip
 mv OpenClash-master/luci-app-openclash openwrt/package/
 cd openwrt
+
+
