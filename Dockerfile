@@ -9,7 +9,7 @@ RUN apt-get update -qq &&\
         curl \
         file \
         gawk \
-        gcc-multilib \
+        g++-multilib \
         gettext \
         git \
         libdw-dev \
@@ -34,5 +34,10 @@ RUN apt-get update -qq &&\
         && apt-get clean \
         && rm -rf /var/lib/apt/lists/*
 
+
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 RUN useradd -c "OpenWrt Builder" -m -d /home/build -G sudo -s /bin/bash build
+
+USER build
+WORKDIR /work
+

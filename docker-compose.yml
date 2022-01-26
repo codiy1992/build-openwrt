@@ -7,6 +7,9 @@ services:
     build:
       context: .
     volumes:
-      - ${PWD}/bin:/home/build/openwrt/bin
+      - ${SOURCE_CODE_PATH}/openwrt:/work/openwrt
+      - ${SOURCE_CODE_PATH}/lede:/work/lede
+      - ${SOURCE_CODE_PATH}/passwall:/work/passwall
+      - ${SOURCE_CODE_PATH}/openclash:/work/openclash
     network_mode: host
     privileged: true
