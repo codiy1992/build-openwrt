@@ -20,13 +20,15 @@ sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
 cd /work
 
 # Add luci-theme-agron
-git clone --depth 1 git clone https://github.com/jerrykuku/luci-theme-argon.git -b master openwrt/package/
+git clone --depth 1 git clone https://github.com/jerrykuku/luci-theme-argon.git -b master \
+openwrt/package/luci-theme-argon
 
 # Add Kcptun From Passwall
 git clone --depth 1 https://github.com/xiaorouji/openwrt-passwall.git passwall
 mv passwall/kcptun openwrt/package/
 
 # Add OpenClash
-git clone --depth 1 https://github.com/vernesong/OpenClash.git openwrt/package/
+git clone --depth 1 https://github.com/vernesong/OpenClash.git openclash
+mv openclash/luci-app-openclash openwrt/package/
 
 
