@@ -19,19 +19,14 @@ sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
 
 cd /work
 
-# Add Some Packages From Lede
-git clone --depth 1 https://github.com/coolsnowwolf/lede -b master lede
-mv lede/package/lean/luci-app-webadmin openwrt/package/
-mv lede/package/lean/luci-app-docker openwrt/package/
-mv lede/package/lean/luci-lib-docker openwrt/package/
-mv lede/package/lean/luci-theme-argon openwrt/package/
+# Add luci-theme-agron
+git clone --depth 1 git clone https://github.com/jerrykuku/luci-theme-argon.git -b master openwrt/package/
 
 # Add Kcptun From Passwall
 git clone --depth 1 https://github.com/xiaorouji/openwrt-passwall.git passwall
 mv passwall/kcptun openwrt/package/
 
 # Add OpenClash
-git clone --depth 1 https://github.com/vernesong/OpenClash.git openclash
-mv openclash/luci-app-openclash openwrt/package/
+git clone --depth 1 https://github.com/vernesong/OpenClash.git openwrt/package/
 
 
