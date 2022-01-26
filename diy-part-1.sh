@@ -26,7 +26,7 @@ mv lede/package/lean/luci-app-webadmin openwrt/package/
 mv lede/package/lean/luci-app-turboacc openwrt/package/
 
 # Add luci-theme-agron
-git clone --depth 1 git clone https://github.com/jerrykuku/luci-theme-argon.git -b master \
+git clone --depth 1 https://github.com/jerrykuku/luci-theme-argon.git -b master \
 openwrt/package/luci-theme-argon
 
 # Add OpenClash
