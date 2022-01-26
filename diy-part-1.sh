@@ -11,19 +11,19 @@
 #
 
 # Use Lean's package and luci replace openwrt defaults
-sed -i 's/^\(.*packages\)/#\1/' feeds.conf.default
-sed -i 's/^\(.*luci\)/#\1/' feeds.conf.default
-echo 'src-git packages https://github.com/coolsnowwolf/packages' >> feeds.conf.default
-echo 'src-git luci https://github.com/coolsnowwolf/luci' >> feeds.conf.default
+# sed -i 's/^\(.*packages\)/#\1/' feeds.conf.default
+# sed -i 's/^\(.*luci\)/#\1/' feeds.conf.default
+# echo 'src-git packages https://github.com/coolsnowwolf/packages' >> feeds.conf.default
+# echo 'src-git luci https://github.com/coolsnowwolf/luci' >> feeds.conf.default
 # Add other feed source
 # echo 'src-git passwall https://github.com/xiaorouji/openwrt-passwall' >> feeds.conf.default
 
 cd /work
 
-# Add Some Packages From Lede
-git clone --depth 1 https://github.com/coolsnowwolf/lede -b master lede
-mv lede/package/lean/luci-app-webadmin openwrt/package/
-mv lede/package/lean/luci-app-turboacc openwrt/package/
+# Uncomment if doesn't use Lean's
+# git clone --depth 1 https://github.com/coolsnowwolf/lede -b master lede
+# mv lede/package/lean/luci-app-webadmin openwrt/package/
+# mv lede/package/lean/luci-app-turboacc openwrt/package/
 
 # Add luci-theme-agron
 git clone --depth 1 https://github.com/jerrykuku/luci-theme-argon.git -b master \
