@@ -20,15 +20,6 @@
 
 cd /work
 
-# Uncomment if doesn't use Lean's
-# git clone --depth 1 https://github.com/coolsnowwolf/lede -b master lede
-# mv lede/package/lean/luci-app-webadmin openwrt/package/
-# mv lede/package/lean/luci-app-turboacc openwrt/package/
-
-# Add luci-theme-agron
-git clone --depth 1 https://github.com/jerrykuku/luci-theme-argon.git -b master \
-openwrt/package/luci-theme-argon
-
 # Add OpenClash
 git clone --depth 1 https://github.com/vernesong/OpenClash.git openclash
 mv openclash/luci-app-openclash openwrt/package/
