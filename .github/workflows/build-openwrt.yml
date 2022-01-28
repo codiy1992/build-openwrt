@@ -4,19 +4,33 @@ on:
   repository_dispatch:
   workflow_dispatch:
     inputs:
-      ssh:
-        description: 'SSH connection to Actions'
+      repo_url:
+        description: 'Specify source repository url'
+        required: true
+        default: 'https://github.com/openwrt/openwrt'
+        type: choice
+        options:
+          - 'https://github.com/openwrt/openwrt'
+          - 'https://github.com/coolsnowwolf/lede'
+      repo_branch:
+        description: 'Specify repository branch'
+        required: true
+        default: 'master'
+      config_file:
+        description: 'Specify config file location'
+        required: true
+        default: 'lede/x86_64.config'
+      feed_script:
+        description: 'Specify feeds script location'
         required: false
-        default: 'false'
+        default: ''
+      ipv4:
+        description: 'Specify IP address built in the firmware'
+        required: false
+        default: '192.168.1.1'
 
 env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
-  # REPO_URL: https://github.com/openwrt/openwrt
-  REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: x86_64.config
-  DIY_P1_SH: diy-part-1.sh
-  DIY_P2_SH: diy-part-2.sh
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   TZ: Asia/Shanghai
@@ -50,15 +64,17 @@ jobs:
       working-directory: /work
       run: |
         df -hT $PWD
-        git clone $REPO_URL -b $REPO_BRANCH openwrt
+        git clone ${{ inputs.repo_url }} -b ${{ inputs.repo_branch }} openwrt
         ln -sf /work/openwrt $GITHUB_WORKSPACE/openwrt
 
     - name: Load custom feeds
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        chmod +x $DIY_P1_SH
-        cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P1_SH
+        if [ -e ${{ inputs.feed_script }} ]; then
+          chmod +x ${{ inputs.feed_script }}
+          cd openwrt
+          $GITHUB_WORKSPACE/${{ inputs.feed_script }}
+        fi
 
     - name: Update & Install feeds
       working-directory: ./openwrt
@@ -69,12 +85,10 @@ jobs:
     - name: Load custom configuration
       run: |
         [ -e files ] && mv files openwrt/files
-        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        chmod +x $DIY_P2_SH
-        cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P2_SH
+        [ -e ${{ inputs.config_file }}] && mv ${{ inputs.config_file }}openwrt/.config
+        sed -i 's/192.168.1.1/${{ inputs.ipv4 }}/g' openwrt/package/base-files/files/bin/config_generate
 
-    - name: Download package
+    - name: Download packages
       working-directory: ./openwrt
       run: |
         make defconfig
@@ -119,8 +133,35 @@ jobs:
         name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE }}
 
+    - name: Generate release tag
+      id: tag
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      run: |
+        echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M")"
+        touch release.txt
+        echo "::set-output name=status::success"
+
+    - name: Upload firmware to release
+      uses: softprops/action-gh-release@v1
+      if: steps.tag.outputs.status == 'success' && !cancelled()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.tag.outputs.release_tag }}
+        body_path: release.txt
+        files: ${{ env.FIRMWARE }}/*
+
     - name: Delete workflow runs
       uses: GitRML/delete-workflow-runs@main
       with:
         retain_days: 1
         keep_minimum_runs: 3
+
+    - name: Remove old Releases
+      uses: dev-drprasad/delete-older-releases@v0.1.0
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      with:
+        keep_latest: 3
+        delete_tags: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
