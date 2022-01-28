@@ -1,8 +1,7 @@
 name: Build OpenWrt
 
 on:
-  repository_dispatch:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       repo_url:
         description: 'Specify source repository url'
