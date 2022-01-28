@@ -19,13 +19,13 @@ on:
       config_file:
         description: 'Specify config file location'
         required: true
-        default: 'lede/x86_64.config'
+        default: ''
       feed_script:
         description: 'Specify feeds script location'
         required: false
         default: ''
       ipv4:
-        description: 'Specify IP address built in the firmware'
+        description: 'Specify IP address built in'
         required: false
         default: '192.168.1.1'
 
