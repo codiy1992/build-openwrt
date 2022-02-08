@@ -10,9 +10,9 @@ config interface 'lan'
     option type 'bridge'
     option ifname 'eth0'
     option proto 'static'
+    option ip6assign '64'
+    option ipaddr '10.0.0.2'
+    option gateway '10.0.0.1'
     option netmask '255.255.255.0'
-    option ip6assign '60'
-    option ipaddr '192.168.50.100'
-    option gateway '192.168.50.1'
-    option dns '192.168.50.1'
+
 

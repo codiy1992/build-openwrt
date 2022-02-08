@@ -10,15 +10,16 @@ export REPO_NAME="codiy1992/build-openwrt"
 export FILE_PATH="releases/download/$VERSION"
 export FILE_NAME="openwrt-x86-64-generic-rootfs.tar.gz"
 
-export DOCKERFILE="Dockerfile"
 export IMAGE="${SOURCE}-$TYPE"
 export IMAGE_TAG="$IMAGE:$ARCH-$VERSION"
 
-# wget "https://github.com/$REPO_NAME/$FILE_PATH/$FILE_NAME" || exit 1
+if ! [ -f $FILE_NAME ]; then
+    wget "https://github.com/$REPO_NAME/$FILE_PATH/$FILE_NAME" || exit 1
+fi
 
 mkdir -p ./build
-# tar xf "$FILE_NAME" --strip=1 -C ./build
-# rm -rf "$FILE_NAME"
+
+tar xf "$FILE_NAME" --strip=1 -C ./build
 
 cp -r ./etc/* ./build/etc
 
@@ -31,4 +32,5 @@ docker build \
 
 docker tag "$IMAGE_TAG" "$IMAGE:latest"
 
+# rm -rf "$FILE_NAME"
 # rm -rf ./build
