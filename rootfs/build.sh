@@ -9,17 +9,18 @@ export VERSION="${VERSION-2022.02.07-2350}"
 export REPO_NAME="codiy1992/build-openwrt"
 export FILE_PATH="releases/download/$VERSION"
 export FILE_NAME="openwrt-x86-64-generic-rootfs.tar.gz"
+export SAVE_NAME="$SOURCE-${ARCH//_/-}-$VERSION-$TYPE.tar.gz"
 
 export IMAGE="${SOURCE}-$TYPE"
 export IMAGE_TAG="$IMAGE:$ARCH-$VERSION"
 
-if ! [ -f $FILE_NAME ]; then
-    wget "https://github.com/$REPO_NAME/$FILE_PATH/$FILE_NAME" || exit 1
+if ! [ -f $SAVE_NAME ]; then
+    wget -O "https://github.com/$REPO_NAME/$FILE_PATH/$FILE_NAME" || exit 1
 fi
 
 mkdir -p ./build
 
-tar xf "$FILE_NAME" --strip=1 -C ./build
+tar xf "$SAVE_NAME" --strip=1 -C ./build
 
 cp -r ./etc/* ./build/etc
 

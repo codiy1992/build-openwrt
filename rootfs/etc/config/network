@@ -1,10 +1,10 @@
+config globals 'globals'
+
 config interface 'loopback'
     option ifname 'lo'
     option proto 'static'
     option ipaddr '127.0.0.1'
     option netmask '255.0.0.0'
-
-config globals 'globals'
 
 config interface 'lan'
     option type 'bridge'
@@ -14,5 +14,3 @@ config interface 'lan'
     option ipaddr '10.0.0.2'
     option gateway '10.0.0.1'
     option netmask '255.255.255.0'
-
-
