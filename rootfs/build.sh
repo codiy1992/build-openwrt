@@ -15,7 +15,7 @@ export IMAGE="${SOURCE}-$TYPE"
 export IMAGE_TAG="$IMAGE:$ARCH-$VERSION"
 
 if ! [ -f $SAVE_NAME ]; then
-    wget -O "https://github.com/$REPO_NAME/$FILE_PATH/$FILE_NAME" || exit 1
+    wget -O $SAVE_NAME "https://github.com/$REPO_NAME/$FILE_PATH/$FILE_NAME" || exit 1
 fi
 
 mkdir -p ./build
