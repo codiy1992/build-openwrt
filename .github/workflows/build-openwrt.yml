@@ -140,10 +140,11 @@ jobs:
       run: |
         echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M")"
         touch release.txt
-        echo -e "Source: ${{ github.event.inputs.repo_url }}\n" >> release.txt
-        echo -e "Branch: ${{ github.event.inputs.repo_branch }}\n" >> release.txt
-        echo -e "Config: ${{ github.event.inputs.config_file }}\n" >> release.txt
-        echo -e "Feeds: ${{ github.event.inputs.feed_script }}\n" >> release.txt
+        echo -e "**Source**: ${{ github.event.inputs.repo_url }}" >> release.txt
+        echo -e "**Branch**: ${{ github.event.inputs.repo_branch }}" >> release.txt
+        echo -e "**Config**: ${{ github.event.inputs.config_file }}" >> release.txt
+        echo -e "**Feeds**: ${{ github.event.inputs.feed_script }}" >> release.txt
+        echo -e "**IPv4**: ${{ github.event.inputs.ipv4 }}" >> release.txt
         echo "::set-output name=status::success"
 
     - name: Upload firmware to release
