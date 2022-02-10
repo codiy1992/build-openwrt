@@ -55,10 +55,11 @@ jobs:
         docker rmi `docker images -q`
         sudo rm -rf  /usr/share/dotnet  /etc/mysql  /etc/php
         sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
-        sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* php*
+        sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox
+        sudo -E apt-get -y purge google* dotnet* powershell openjdk* php*
         sudo -E apt-get -qq update
         # https://raw.githubusercontent.com/P3TERX/openwrt-list/master/depends-ubuntu-2004
-        sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 python2.7 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf wget curl swig rsync
+        sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-2004)
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
         sudo timedatectl set-timezone "$TZ"
@@ -69,13 +70,15 @@ jobs:
       working-directory: /work
       run: |
         df -hT $PWD
-        git clone ${{ github.event.inputs.repo_url }} -b ${{ github.event.inputs.repo_branch }} openwrt
+        git clone ${{ github.event.inputs.repo_url }} \
+          -b ${{ github.event.inputs.repo_branch }} openwrt
         ln -sf /work/openwrt $GITHUB_WORKSPACE/openwrt
 
     - name: Load custom feeds
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        if [ "${{ github.event.inputs.feed_script }}" != "" ] && [ -f ${{ github.event.inputs.feed_script }} ]; then
+        if [ "${{ github.event.inputs.feed_script }}" != "" ] && \
+          [ -f ${{ github.event.inputs.feed_script }} ]; then
           chmod +x ${{ github.event.inputs.feed_script }}
           cd openwrt
           $GITHUB_WORKSPACE/${{ github.event.inputs.feed_script }}
@@ -90,8 +93,10 @@ jobs:
     - name: Load custom configuration
       run: |
         [ -e files ] && mv files openwrt/files
-        [ -e ${{ github.event.inputs.config_file }} ] && mv ${{ github.event.inputs.config_file }} openwrt/.config
-        sed -i 's/192.168.1.1/${{ github.event.inputs.ipv4 }}/g' openwrt/package/base-files/files/bin/config_generate
+        (cat ${{ github.event.inputs.config_file }} |grep -o '^[^#]*' |sort|uniq) \
+        2>/dev/null > openwrt/.config
+        sed -i 's/192.168.1.1/${{ github.event.inputs.ipv4 }}/g' \
+        openwrt/package/base-files/files/bin/config_generate
 
     - name: Download packages
       working-directory: ./openwrt
