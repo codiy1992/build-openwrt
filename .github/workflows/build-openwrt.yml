@@ -76,8 +76,7 @@ jobs:
     - name: Load custom feeds
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        if [ "${{ github.event.inputs.feed_script }}" != "" ] && \
-          [ -f ${{ github.event.inputs.feed_script }} ]; then
+        if [ "${{ github.event.inputs.feed_script }}" != "" ] && [ -f ${{ github.event.inputs.feed_script }} ]; then
           chmod +x ${{ github.event.inputs.feed_script }}
           cd openwrt
           $GITHUB_WORKSPACE/${{ github.event.inputs.feed_script }}
