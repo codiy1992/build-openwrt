@@ -1,0 +1,99 @@
+name: Build OpenWrt
+
+on:
+  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      repo_url:
+        description: 'Specify source repository url'
+        required: true
+        default: 'https://github.com/openwrt/openwrt'
+        type: choice
+        options:
+          - 'https://github.com/openwrt/openwrt'
+          - 'https://github.com/coolsnowwolf/lede'
+      repo_branch:
+        description: 'Specify repository branch'
+        required: true
+        default: 'master'
+      config_file:
+        description: 'Specify config file location'
+        required: true
+        default: ''
+      feed_script:
+        description: 'Specify feeds script location'
+        required: false
+        default: ''
+      ipv4:
+        description: 'Specify IP address built in'
+        required: false
+        default: '192.168.1.1'
+      note:
+        description: 'Write build note'
+        required: false
+        default: ''
+
+env:
+  FEEDS_CONF: feeds.conf.default
+  UPLOAD_BIN_DIR: false
+  UPLOAD_FIRMWARE: true
+  UPLOAD_RELEASE: true
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        docker rmi `docker images -q`
+        sudo timedatectl set-timezone "$TZ"
+        sudo mkdir -p /work
+        sudo chown $USER:$GROUPS /work
+
+    - name: Clone source code
+      working-directory: /work
+      run: |
+        df -hT $PWD
+        git clone ${{ github.event.inputs.repo_url }} \
+          -b ${{ github.event.inputs.repo_branch }} openwrt
+        ln -sf /work/openwrt $GITHUB_WORKSPACE/openwrt
+
+    - name: Load custom feeds
+      run: |
+        [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
+        if [ "${{ github.event.inputs.feed_script }}" != "" ] && \
+          [ -f ${{ github.event.inputs.feed_script }} ]; then
+          chmod +x ${{ github.event.inputs.feed_script }}
+          cd openwrt
+          $GITHUB_WORKSPACE/${{ github.event.inputs.feed_script }}
+        fi
+
+    - name: Update & Install feeds
+      run: |
+        cd openwrt
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+
+    - name: Load custom configuration
+      run: |
+        [ -e files ] && mv files openwrt/files
+        (cat ${{ github.event.inputs.config_file }} |grep -o '^[^#]*' |sort|uniq) \
+        2>/dev/null > openwrt/.config
+        sed -i 's/192.168.1.1/${{ github.event.inputs.ipv4 }}/g' \
+        openwrt/package/base-files/files/bin/config_generate
+
+    - name: Download packages
+      working-directory: ./openwrt
+      run: |
+        make defconfig
+        make download -j$(nproc)
+        find dl -size -1024c -exec ls -l {} \;
+        find dl -size -1024c -exec rm -f {} \;
+
