@@ -1,24 +1,20 @@
 # OpenWrt as a Docker Image
 
+## Docker in docker
+
+If you run OpenWrt as a docker container, you can't run another docker daemon inside this container.
+but you can create a volume mapping `/var/run/docker.sock` to this container, and use it to manage
+the host's container.
+
+## Change Nameserver
+
+In file `/etc/resolv.conf`, default nameserver is `127.0.0.11` change to a known public nameserver like `114.114.114.114`
+
+```
+nameserver 114.114.114.114
+options ndots:0
+```
+
 ## References
-
 * [Example Dockerfile](https://openwrt.org/docs/guide-user/virtualization/docker_openwrt_image#example_dockerfile)
-
-## verify the Linux Kernel for Container Compatibility
-
-* Verify the Linux Kernel directly
-
-```shell
-wget https://github.com/moby/moby/raw/master/contrib/check-config.sh
-chmod +x check-config.sh
-./check-config.sh
-```
-
-* Verify the Linux Kernel from a .config file
-
-```shell
-# dump config into file
-zcat /proc/config.gz > kernel.config
-# verify
-./check-config.sh kernel.config
-```
+* [Docker in Docker](https://hub.docker.com/_/docker/)

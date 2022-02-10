@@ -28,6 +28,10 @@ on:
         description: 'Specify IP address built in'
         required: false
         default: '192.168.1.1'
+      note:
+        description: 'Write build note'
+        required: false
+        default: ''
 
 env:
   FEEDS_CONF: feeds.conf.default
@@ -145,6 +149,7 @@ jobs:
         echo -e "**Config**: ${{ github.event.inputs.config_file }}" >> release.txt
         echo -e "**Feeds**: ${{ github.event.inputs.feed_script }}" >> release.txt
         echo -e "**IPv4**: ${{ github.event.inputs.ipv4 }}" >> release.txt
+        echo -e "**Note**: ${{ github.event.inputs.note }}" >> release.txt
         echo "::set-output name=status::success"
 
     - name: Upload firmware to release
