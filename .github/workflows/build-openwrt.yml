@@ -70,8 +70,7 @@ jobs:
       working-directory: /work
       run: |
         df -hT $PWD
-        git clone ${{ github.event.inputs.repo_url }} \
-          -b ${{ github.event.inputs.repo_branch }} openwrt
+        git clone ${{ github.event.inputs.repo_url }} -b ${{ github.event.inputs.repo_branch }} openwrt
         ln -sf /work/openwrt $GITHUB_WORKSPACE/openwrt
 
     - name: Load custom feeds
