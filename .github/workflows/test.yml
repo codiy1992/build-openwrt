@@ -65,6 +65,8 @@ jobs:
         echo '------------'
         ls -al ./openwrt
         ln -sf /work/openwrt $GITHUB_WORKSPACE/openwrt
+        echo $GITHUB_WORKSPACE
+        pwd
 
     - name: Load custom feeds
       run: |
@@ -77,10 +79,11 @@ jobs:
         fi
 
     - name: Update & Install feeds
+      working-directory: ./openwrt
       run: |
-        cd openwrt
         echo '------'
         pwd
+        ls -al
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
