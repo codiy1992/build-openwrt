@@ -6,6 +6,10 @@ use github workflow actions to build openwrt
 Volumes Binding for Docker must be case-sensitive, [case-insensitive by default On MacOS][1], You
 can use `Disk Utility` tool to Create an **case-sensitive** volume and use it to binding.
 
+## `ext4` vs `squashfs`
+
+## `grub` vs `efi`
+
 ## Verify the Linux Kernel for Container Compatibility
 
 * Verify the Linux Kernel directly
